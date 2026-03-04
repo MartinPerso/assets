@@ -5,6 +5,7 @@ export type TransactionCsvRow = {
   symbol: string
   quantity: string
   unitPrice: string
+  currency: string
   account: string
   comments: string
   errorsSummary?: string

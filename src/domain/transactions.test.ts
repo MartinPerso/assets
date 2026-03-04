@@ -9,6 +9,7 @@ const validRow: TransactionCsvRow = {
   symbol: 'NYSEARCA:URTH',
   quantity: '4',
   unitPrice: '93.07',
+  currency: 'USD',
   account: 'Brokerage',
   comments: 'import',
 }

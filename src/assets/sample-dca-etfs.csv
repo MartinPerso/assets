@@ -1,25 +1,25 @@
-Date,Name,ISIN,Quantity,Price,Account,Comments
-15/01/2024,iShares MSCI World ETF,NYSEARCA:URTH,12.253056,133.63,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9161
-15/01/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,30.779754,29.24,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/01/2024,Amundi CAC 40 UCITS ETF,EPA:C40,5.036092,119.14,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/04/2024,iShares MSCI World ETF,NYSEARCA:URTH,11.653708,137.31,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9374
-15/04/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.8,31.25,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/04/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.670715,128.46,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/07/2024,iShares MSCI World ETF,NYSEARCA:URTH,10.954317,149.18,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9179
-15/07/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.1602,31.96,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/07/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.780876,125.5,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/10/2024,iShares MSCI World ETF,NYSEARCA:URTH,10.298746,158.4,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9195
-15/10/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,27.514522,32.71,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/10/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.66128,128.72,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/01/2025,iShares MSCI World ETF,NYSEARCA:URTH,9.759556,158.4,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9703
-15/01/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,27.607362,32.6,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/01/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.606172,130.26,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/04/2025,iShares MSCI World ETF,NYSEARCA:URTH,11.630889,146.67,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8793
-15/04/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.453999,31.63,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/04/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.824702,124.36,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/07/2025,iShares MSCI World ETF,NYSEARCA:URTH,10.212452,170.81,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8599
-15/07/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,26.315789,34.2,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/07/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.354768,137.78,Demo PEA,Quarterly DCA demo - 600 EUR contribution
-15/10/2025,iShares MSCI World ETF,NYSEARCA:URTH,9.630429,181.64,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8575
-15/10/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,25.510204,35.28,Demo CTO,Quarterly DCA demo - 900 EUR contribution
-15/10/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.142502,144.84,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+Date,Name,ISIN,Quantity,Price,Currency,Account,Comments
+15/01/2024,iShares MSCI World ETF,NYSEARCA:URTH,12.253056,133.63,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9161
+15/01/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,30.779754,29.24,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/01/2024,Amundi CAC 40 UCITS ETF,EPA:C40,5.036092,119.14,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/04/2024,iShares MSCI World ETF,NYSEARCA:URTH,11.653708,137.31,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9374
+15/04/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.8,31.25,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/04/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.670715,128.46,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/07/2024,iShares MSCI World ETF,NYSEARCA:URTH,10.954317,149.18,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9179
+15/07/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.1602,31.96,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/07/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.780876,125.5,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/10/2024,iShares MSCI World ETF,NYSEARCA:URTH,10.298746,158.4,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9195
+15/10/2024,Amundi MSCI Europe UCITS ETF,AMS:IMEU,27.514522,32.71,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/10/2024,Amundi CAC 40 UCITS ETF,EPA:C40,4.66128,128.72,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/01/2025,iShares MSCI World ETF,NYSEARCA:URTH,9.759556,158.4,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9703
+15/01/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,27.607362,32.6,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/01/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.606172,130.26,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/04/2025,iShares MSCI World ETF,NYSEARCA:URTH,11.630889,146.67,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8793
+15/04/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,28.453999,31.63,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/04/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.824702,124.36,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/07/2025,iShares MSCI World ETF,NYSEARCA:URTH,10.212452,170.81,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8599
+15/07/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,26.315789,34.2,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/07/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.354768,137.78,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution
+15/10/2025,iShares MSCI World ETF,NYSEARCA:URTH,9.630429,181.64,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.8575
+15/10/2025,Amundi MSCI Europe UCITS ETF,AMS:IMEU,25.510204,35.28,EUR,Demo CTO,Quarterly DCA demo - 900 EUR contribution
+15/10/2025,Amundi CAC 40 UCITS ETF,EPA:C40,4.142502,144.84,EUR,Demo PEA,Quarterly DCA demo - 600 EUR contribution

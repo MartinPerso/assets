@@ -8,6 +8,7 @@ export const CSV_HEADERS = [
   'ISIN',
   'Quantity',
   'Price',
+  'Currency',
   'Account',
   'Comments',
 ] as const
@@ -19,6 +20,7 @@ export function rowsToCsvRecords(rows: TransactionCsvRow[]) {
     ISIN: row.symbol.trim(),
     Quantity: row.quantity.trim(),
     Price: row.unitPrice.trim(),
+    Currency: row.currency.trim(),
     Account: row.account.trim(),
     Comments: row.comments.trim(),
   }))

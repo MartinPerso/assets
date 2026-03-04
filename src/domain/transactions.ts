@@ -46,6 +46,10 @@ export function validateTransactionRows(
       messages.push('Price must be a number')
     }
 
+    if (!row.currency?.trim()) {
+      messages.push('Currency is required')
+    }
+
     if (messages.length === 0 && parsedDate !== undefined) {
       const result = transactionSchema.safeParse({
         id: row.id,
@@ -61,7 +65,10 @@ export function validateTransactionRows(
       if (result.success) {
         validTransactions.push(result.data)
 
-        const signature = buildTransactionSignature(result.data)
+        const signature = buildTransactionSignature(
+          result.data,
+          row.currency.trim().toUpperCase(),
+        )
         const existingRows = duplicateGroups.get(signature) ?? []
         duplicateGroups.set(signature, [...existingRows, row.id])
       } else {
@@ -105,13 +112,17 @@ export function getTransactionDateBounds(transactions: Transaction[]) {
   }
 }
 
-function buildTransactionSignature(transaction: Transaction): string {
+function buildTransactionSignature(
+  transaction: Transaction,
+  currency: string,
+): string {
   return [
     transaction.date,
     transaction.name,
     transaction.symbol,
     transaction.quantity,
     transaction.unitPrice,
+    currency,
     transaction.account,
     transaction.comments,
   ].join('|')

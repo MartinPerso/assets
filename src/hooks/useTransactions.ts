@@ -24,8 +24,9 @@ const useTransactionsStore = create<TransactionState>((set) => ({
   async loadFromCache() {
     try {
       const cached = await transactionsRepo.load()
+      const normalizedRows = cached.rows.map(normalizeRow)
       set({
-        rows: cached.rows,
+        rows: normalizedRows,
         rawCsv: cached.rawCsv,
         isReady: true,
         error: undefined,
@@ -43,7 +44,7 @@ const useTransactionsStore = create<TransactionState>((set) => ({
     set({ isSaving: true, error: undefined })
 
     try {
-      const rows = parseCsvContent(csvText)
+      const rows = parseCsvContent(csvText).map(normalizeRow)
       await transactionsRepo.save(rows, csvText)
 
       set({
@@ -62,14 +63,15 @@ const useTransactionsStore = create<TransactionState>((set) => ({
   },
 
   async replaceRows(rows) {
-    set({ rows, isSaving: true, error: undefined })
+    const normalizedRows = rows.map(normalizeRow)
+    set({ rows: normalizedRows, isSaving: true, error: undefined })
 
     try {
-      const rawCsv = serializeCsv(rows)
-      await transactionsRepo.save(rows, rawCsv)
+      const rawCsv = serializeCsv(normalizedRows)
+      await transactionsRepo.save(normalizedRows, rawCsv)
 
       set({
-        rows,
+        rows: normalizedRows,
         rawCsv,
         isSaving: false,
       })
@@ -81,6 +83,13 @@ const useTransactionsStore = create<TransactionState>((set) => ({
     }
   },
 }))
+
+function normalizeRow(row: TransactionCsvRow): TransactionCsvRow {
+  return {
+    ...row,
+    currency: row.currency?.trim().toUpperCase() || 'EUR',
+  }
+}
 
 export function useTransactions() {
   const state = useTransactionsStore()

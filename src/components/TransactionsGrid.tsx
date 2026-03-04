@@ -18,6 +18,7 @@ const columns: Column<GridRow>[] = [
   { key: 'symbol', name: 'ISIN', editable: true, resizable: true },
   { key: 'quantity', name: 'Quantity', editable: true, resizable: true },
   { key: 'unitPrice', name: 'Price', editable: true, resizable: true },
+  { key: 'currency', name: 'Currency', editable: true, resizable: true },
   { key: 'account', name: 'Account', editable: true, resizable: true },
   { key: 'comments', name: 'Comments', editable: true, resizable: true },
   { key: 'errorsSummary', name: 'Errors', resizable: true },
@@ -70,6 +71,7 @@ function stripErrorsSummary(row: GridRow): TransactionCsvRow {
     symbol: row.symbol,
     quantity: row.quantity,
     unitPrice: row.unitPrice,
+    currency: row.currency,
     account: row.account,
     comments: row.comments,
   }

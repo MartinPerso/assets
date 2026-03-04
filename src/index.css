@@ -595,7 +595,8 @@ button {
   color: var(--ink);
 }
 
-.notes-panel__field input {
+.notes-panel__field input,
+.notes-panel__field select {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 16px;

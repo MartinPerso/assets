@@ -31,6 +31,7 @@ export function parseCsvContent(csvText: string): TransactionCsvRow[] {
     symbol: row.ISIN?.trim() ?? '',
     quantity: row.Quantity?.trim() ?? '',
     unitPrice: row.Price?.trim() ?? '',
+    currency: row.Currency?.trim() ?? '',
     account: row.Account?.trim() ?? '',
     comments: row.Comments?.trim() ?? '',
   }))
