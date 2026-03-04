@@ -1,0 +1,10 @@
+name: Vercel Deploy Placeholder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploy this project via the Vercel Git integration instead of GitHub Pages."
