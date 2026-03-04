@@ -28,7 +28,7 @@ Notes:
 
 ## Development
 
-Use Node `22+`.
+Use Node `22.12+` (Vite 7 requirement).
 
 ```bash
 npm install
