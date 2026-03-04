@@ -481,7 +481,17 @@ export function PortfolioAllocationChart({
                   ) : null}
                 </span>
                 <span className="allocation-table__position">
-                  {slice.point ? formatHoldingDetailText(slice.point) : 'N/A'}
+                  {slice.point ? (
+                    <>
+                      <strong>{formatDecimal(slice.point.quantityHeld)}</strong>
+                      <span>{formatCurrency(slice.point.close)}</span>
+                      {formatOriginalPriceText(slice.point) ? (
+                        <span>{formatOriginalPriceText(slice.point)}</span>
+                      ) : null}
+                    </>
+                  ) : (
+                    'N/A'
+                  )}
                 </span>
                 <span
                   className={`allocation-table__performance ${
@@ -532,17 +542,14 @@ function formatOriginalAmountText(
   )
 }
 
-function formatHoldingDetailText(
+function formatOriginalPriceText(
   point: PortfolioComputation['assetSeries'][string][number],
 ) {
-  const quantity = formatDecimal(point.quantityHeld)
-  const euroPrice = formatCurrency(point.close)
-
   if (!point.originalClose || !point.originalCurrency || point.originalCurrency === 'EUR') {
-    return `${quantity} - ${euroPrice}`
+    return undefined
   }
 
-  return `${quantity} - ${euroPrice} (${formatCurrencyAmount(point.originalClose, point.originalCurrency)})`
+  return formatCurrencyAmount(point.originalClose, point.originalCurrency)
 }
 
 function formatAverageBuyText(
