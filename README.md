@@ -16,8 +16,8 @@ Static portfolio tracker built with React and Vite. The site runs entirely in th
 ## CSV format
 
 ```csv
-Date,Name,ISIN,Quantity,Price,Account,Comments
-15/01/2024,iShares MSCI World ETF,NYSEARCA:URTH,12.253056,133.63,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9161
+Date,Name,ISIN,Quantity,Price,Currency,Account,Comments
+15/01/2024,iShares MSCI World ETF,NYSEARCA:URTH,12.253056,133.63,USD,Demo CTO,Quarterly DCA demo - 1500 EUR contribution - USD/EUR 0.9161
 ```
 
 Notes:
@@ -25,6 +25,7 @@ Notes:
 - `Date` uses `dd/MM/yyyy`
 - `ISIN` is treated as a market symbol for v1, for example `NYSEARCA:URTH`, `AMS:IMEU`, or `EPA:C40`
 - `Price` supports either `.` decimals or quoted `,` decimals
+- `Currency` is required (for example `EUR` or `USD`)
 
 ## Development
 

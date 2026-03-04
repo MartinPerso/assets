@@ -6,7 +6,7 @@ import { PortfolioAllocationChart } from '../components/PortfolioAllocationChart
 import { PortfolioChart } from '../components/PortfolioChart'
 import { StatusBanner } from '../components/StatusBanner'
 import { TransactionsGrid } from '../components/TransactionsGrid'
-import { USD_EUR_FX_SYMBOL } from '../domain/symbols'
+import { getQuoteCurrencyForSymbol } from '../domain/symbols'
 import { getTransactionDateBounds } from '../domain/transactions'
 import { useGoogleSheetPreview } from '../hooks/useGoogleSheetPreview'
 import { usePortfolioValuation } from '../hooks/usePortfolioValuation'
@@ -20,6 +20,8 @@ import { downloadTextFile } from '../utils/csv-format'
 import { todayIso } from '../utils/dates'
 
 const defaultGoogleSheetSymbols = ['NYSEARCA:URTH', 'AMS:IMEU', 'EPA:C40'] as const
+const STARTER_SHEET_CURRENCIES = ['EUR', 'USD'] as const
+type StarterSheetCurrency = (typeof STARTER_SHEET_CURRENCIES)[number]
 
 export default function App() {
   const {
@@ -44,6 +46,8 @@ export default function App() {
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([])
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
   const [googleSheetUrlInput, setGoogleSheetUrlInput] = useState<string>()
+  const [starterSheetCurrency, setStarterSheetCurrency] =
+    useState<StarterSheetCurrency>('EUR')
 
   useEffect(() => {
     void loadFromCache()
@@ -100,7 +104,11 @@ export default function App() {
     availableSymbols.length > 0 ? availableSymbols : [...defaultGoogleSheetSymbols]
   const googleSheetStartDate = transactionBounds?.startDate ?? '2024-01-01'
   const googleSheetUrlValue = googleSheetUrlInput ?? googleSheetCsvUrl
-  const googleSheetGrid = buildGoogleSheetGrid(googleSheetSymbols, googleSheetStartDate)
+  const googleSheetGrid = buildGoogleSheetGrid(
+    googleSheetSymbols,
+    googleSheetStartDate,
+    starterSheetCurrency,
+  )
   const googleSheetGridTsv = googleSheetGrid.rows.map((row) => row.join('\t')).join('\n')
 
   async function copyGoogleSheetTemplate() {
@@ -146,7 +154,7 @@ export default function App() {
             onClick={() =>
               downloadTextFile(
                 'portfolio-transactions.csv',
-                rawCsv || 'Date,Name,ISIN,Quantity,Price,Account,Comments\n',
+                rawCsv || 'Date,Name,ISIN,Quantity,Price,Currency,Account,Comments\n',
               )
             }
             disabled={rows.length === 0}
@@ -210,9 +218,9 @@ export default function App() {
             <p>
               Use a published Google Sheets CSV as the market-data source for this
               static site. Portfolio values are normalized to EUR, so USD-quoted
-              symbols also need the <code>{USD_EUR_FX_SYMBOL}</code> block in the
-              same published sheet. The shared default remains available if you do
-              not override it.
+              symbols also need the <code>CURRENCY:USDEUR</code> block in the same
+              published sheet. The shared default remains available if you do not
+              override it.
             </p>
             <label className="notes-panel__field">
               <span>Published CSV URL</span>
@@ -280,13 +288,28 @@ export default function App() {
                     : 'Copy grid'}
               </button>
             </div>
+            <label className="notes-panel__field">
+              <span>Default currency</span>
+              <select
+                value={starterSheetCurrency}
+                onChange={(event) =>
+                  setStarterSheetCurrency(event.target.value as StarterSheetCurrency)
+                }
+              >
+                {STARTER_SHEET_CURRENCIES.map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
+            </label>
             <p>
               Paste this into an empty Google Sheet at <code>A1</code> to create a
               weekly <code>GOOGLEFINANCE</code> layout with an appended live latest
-              quote using your current symbols, then publish that sheet as CSV. Keep
-              the{' '}
-              <code>{USD_EUR_FX_SYMBOL}</code> block because USD holdings are
-              converted to EUR from it.
+              quote using your current symbols, then publish that sheet as CSV.
+              {googleSheetGrid.conversionSymbols.length > 0
+                ? ` Keep the conversion factor block(s): ${googleSheetGrid.conversionSymbols.join(', ')}.`
+                : ' No FX conversion block is needed for the current symbols and default currency.'}
             </p>
             <details className="notes-panel__expand">
               <summary>Preview grid</summary>
@@ -410,13 +433,20 @@ function syncSelection(current: string[], available: string[]) {
   return next.length > 0 ? next : available
 }
 
-function buildGoogleSheetGrid(symbols: string[], startDate: string) {
-  const sheetSymbols = [...symbols, USD_EUR_FX_SYMBOL]
+function buildGoogleSheetGrid(
+  symbols: string[],
+  startDate: string,
+  defaultCurrency: StarterSheetCurrency,
+) {
+  const conversionSymbols = getConversionSymbolsForStarterSheet(symbols, defaultCurrency)
+  const sheetSymbols = [...symbols, ...conversionSymbols]
   const totalColumns = Math.max(sheetSymbols.length * 2, 2)
   const rows = Array.from({ length: 4 }, () => Array.from({ length: totalColumns }, () => ''))
 
   rows[0][0] = 'Start date'
   rows[0][1] = startDate
+  rows[0][2] = 'Default currency'
+  rows[0][3] = defaultCurrency
 
   sheetSymbols.forEach((symbol, index) => {
     const columnIndex = index * 2
@@ -428,10 +458,30 @@ function buildGoogleSheetGrid(symbols: string[], startDate: string) {
 
   return {
     rows,
+    conversionSymbols,
     columnLabels: Array.from({ length: totalColumns }, (_, index) =>
       toSpreadsheetColumnLabel(index),
     ),
   }
+}
+
+function getConversionSymbolsForStarterSheet(
+  symbols: string[],
+  defaultCurrency: StarterSheetCurrency,
+) {
+  const requiredQuoteCurrencies = new Set<StarterSheetCurrency>()
+
+  symbols.forEach((symbol) => {
+    try {
+      requiredQuoteCurrencies.add(getQuoteCurrencyForSymbol(symbol))
+    } catch {
+      // Keep unsupported symbols visible in the sheet helper without blocking generation.
+    }
+  })
+
+  return [...requiredQuoteCurrencies]
+    .filter((currency) => currency !== defaultCurrency)
+    .map((currency) => `CURRENCY:${currency}${defaultCurrency}`)
 }
 
 function buildGoogleFinanceSheetFormula(columnLabel: string) {
