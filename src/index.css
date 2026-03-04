@@ -212,7 +212,7 @@ button {
 
 .workspace-overview {
   display: grid;
-  grid-template-columns: minmax(260px, 0.74fr) minmax(0, 1.52fr);
+  grid-template-columns: minmax(300px, 0.96fr) minmax(0, 1.28fr);
   gap: 24px;
   align-items: start;
 }
@@ -272,6 +272,28 @@ button {
   margin: 8px 0 0;
   color: var(--ink-muted);
   font-size: 0.92rem;
+}
+
+.chart-mode-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.chart-mode-switch__button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 0.72rem;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.chart-mode-switch__button--active {
+  background: #16324f;
+  color: #f8f2dc;
 }
 
 .panel--chart {
@@ -392,7 +414,7 @@ button {
   flex-direction: column;
   min-width: 0;
   align-self: stretch;
-  max-height: 760px;
+  max-height: 720px;
 }
 
 .allocation-panel__header-actions {
@@ -454,7 +476,7 @@ button {
   flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
-  padding: 14px 16px 0;
+  padding: 10px 12px 0;
   overflow-x: hidden;
 }
 
@@ -462,20 +484,20 @@ button {
 .allocation-table__row {
   display: grid;
   grid-template-columns:
-    minmax(0, 1.15fr)
+    minmax(0, 1.12fr)
     minmax(0, 0.82fr)
     minmax(0, 0.82fr)
-    minmax(0, 1fr)
+    minmax(0, 0.74fr)
     minmax(0, 0.72fr)
     minmax(56px, 0.42fr);
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
 .allocation-table__header {
-  padding: 0 12px 10px;
+  padding: 0 10px 8px;
   border-bottom: 1px solid rgba(22, 50, 79, 0.08);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -486,17 +508,17 @@ button {
   display: grid;
   align-content: start;
   flex: 1 1 auto;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
   overflow: auto;
-  padding: 12px 2px 0 0;
+  padding: 10px 2px 0 0;
 }
 
 .allocation-table__row {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.74);
   text-align: left;
 }
@@ -519,7 +541,7 @@ button {
 }
 
 .allocation-table__asset-text {
-  gap: 2px;
+  gap: 1px;
 }
 
 .allocation-table__asset-text strong,
@@ -528,23 +550,29 @@ button {
 }
 
 .allocation-table__asset-text span {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .allocation-table__value {
-  gap: 2px;
+  gap: 1px;
   white-space: normal;
 }
 
 .allocation-table__value span,
 .allocation-table__performance span,
 .allocation-table__position {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
 }
 
 .allocation-table__performance {
-  gap: 2px;
+  gap: 1px;
   white-space: normal;
+}
+
+.allocation-table__position {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .allocation-table__performance--positive strong,

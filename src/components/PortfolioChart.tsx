@@ -4,6 +4,7 @@ import { chartPalette } from './chartPalette'
 import {
   formatCurrency,
   formatCurrencyAmount,
+  formatPercent,
   formatSignedCurrency,
   formatSignedPercent,
 } from '../utils/numbers'
@@ -19,10 +20,19 @@ type TooltipRow = {
   value: [string, number]
 }
 
+const chartModeOptions = [
+  { id: 'stacked', label: 'Stacked' },
+  { id: 'absolute', label: 'Abs P/L' },
+  { id: 'relative', label: 'Rel P/L' },
+] as const
+
+type ChartMode = (typeof chartModeOptions)[number]['id']
+
 export function PortfolioChart({ valuation }: PortfolioChartProps) {
   const chartRef = useRef<EChartsInstance | null>(null)
   const modifierKeyRef = useRef(false)
   const isApplyingSelectionRef = useRef(false)
+  const [chartMode, setChartMode] = useState<ChartMode>('stacked')
   const [legendSelection, setLegendSelection] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
@@ -59,7 +69,15 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
     name: valuation.assetNames[symbol] ?? symbol,
     color: chartPalette[index % chartPalette.length],
   }))
-  const legendNames = [...new Set([...symbolMetadata.map((item) => item.name), 'Total'])]
+  const legendNames = useMemo(
+    () => [
+      ...new Set([
+        ...symbolMetadata.map((item) => item.name),
+        ...(chartMode === 'stacked' ? ['Total'] : []),
+      ]),
+    ],
+    [chartMode, symbolMetadata],
+  )
   const legendSelected = useMemo(
     () =>
       Object.fromEntries(
@@ -70,6 +88,10 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
   const selectedAssetMetadata = symbolMetadata.filter(
     (item) => legendSelected[item.name] !== false,
   )
+  const aggregatedSelectedSeries = buildAggregatedSelectedSeries({
+    valuation,
+    selectedSymbols: selectedAssetMetadata.map((item) => item.symbol),
+  })
   const overlaySeries = buildInvestedOverlaySeries({
     valuation,
     symbols,
@@ -125,6 +147,28 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
         color: '#f4f1de',
       },
       formatter: (params: TooltipRow[]) => {
+        if (chartMode !== 'stacked') {
+          const date = params[0]?.value[0]
+          const point = date
+            ? aggregatedSelectedSeries.find((candidate) => candidate.date === date)
+            : undefined
+
+          if (!point) {
+            return ''
+          }
+
+          const headline =
+            chartMode === 'absolute'
+              ? formatSignedCurrency(point.gainLossAmount)
+              : formatSignedPercent(point.gainLossRatio)
+
+          return [
+            `<strong>${point.date}</strong>`,
+            `<div>Total gain/loss: ${headline}</div>`,
+            `<div style="opacity:0.72">Invested ${formatCurrency(point.investedAmount)} | Value ${formatCurrency(point.marketValue)} | ${formatSignedCurrency(point.gainLossAmount)} (${formatSignedPercent(point.gainLossRatio)})</div>`,
+          ].join('')
+        }
+
         const rows = [...params]
           .filter((row) => !String(row.seriesId).endsWith('__invested'))
           .sort((left, right) => right.value[1] - left.value[1])
@@ -168,7 +212,8 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
       type: 'value',
       axisLabel: {
         color: '#52677a',
-        formatter: (value: number) => formatCurrency(value),
+        formatter: (value: number) =>
+          chartMode === 'relative' ? formatPercent(value) : formatCurrency(value),
       },
       splitLine: {
         lineStyle: {
@@ -184,44 +229,91 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
       },
     ],
     series: [
-      ...symbolMetadata.map(({ symbol, name, color }, index) => ({
-        id: `${symbol}__value`,
-        name,
-        type: 'line',
-        stack: 'portfolio',
-        symbol: 'none',
-        smooth: false,
-        showSymbol: false,
-        areaStyle: {
-          opacity: 0.82,
-        },
-        lineStyle: {
-          width: 1.2,
-          color,
-        },
-        itemStyle: {
-          color,
-        },
-        z: 2 + index,
-        data: valuation.assetSeries[symbol].map((point) => [point.date, point.marketValue]),
-      })),
-      {
-        id: 'portfolio__total',
-        name: 'Total',
-        type: 'line',
-        symbol: 'none',
-        smooth: false,
-        showSymbol: false,
-        lineStyle: {
-          width: 2.4,
-          color: '#0d1b2a',
-        },
-        itemStyle: {
-          color: '#0d1b2a',
-        },
-        data: valuation.points.map((point) => [point.date, point.totalValue]),
-      },
-      ...overlaySeries,
+      ...(chartMode === 'stacked'
+        ? [
+            ...symbolMetadata.map(({ symbol, name, color }, index) => ({
+              id: `${symbol}__value`,
+              name,
+              type: 'line',
+              stack: 'portfolio',
+              symbol: 'none',
+              smooth: false,
+              showSymbol: false,
+              areaStyle: {
+                opacity: 0.82,
+              },
+              lineStyle: {
+                width: 1.2,
+                color,
+              },
+              itemStyle: {
+                color,
+              },
+              z: 2 + index,
+              data: valuation.assetSeries[symbol].map((point) => [point.date, point.marketValue]),
+            })),
+            {
+              id: 'portfolio__total',
+              name: 'Total',
+              type: 'line',
+              symbol: 'none',
+              smooth: false,
+              showSymbol: false,
+              lineStyle: {
+                width: 2.4,
+                color: '#0d1b2a',
+              },
+              itemStyle: {
+                color: '#0d1b2a',
+              },
+              data: valuation.points.map((point) => [point.date, point.totalValue]),
+            },
+            ...overlaySeries,
+          ]
+        : [
+            ...symbolMetadata.map(({ symbol, name, color }) => ({
+              id: `${symbol}__selector`,
+              name,
+              type: 'line',
+              data: [],
+              symbol: 'none',
+              silent: true,
+              tooltip: {
+                show: false,
+              },
+              lineStyle: {
+                width: 0,
+                color,
+                opacity: 0,
+              },
+              itemStyle: {
+                color,
+                opacity: 0,
+              },
+              emphasis: {
+                disabled: true,
+              },
+            })),
+            {
+              id: 'portfolio__gain_loss_total',
+              name: chartMode === 'absolute' ? 'Total gain/loss' : 'Total gain/loss %',
+              type: 'line',
+              symbol: 'none',
+              smooth: false,
+              showSymbol: false,
+              lineStyle: {
+                width: 2.6,
+                color: '#0d1b2a',
+              },
+              itemStyle: {
+                color: '#0d1b2a',
+              },
+              data: aggregatedSelectedSeries.map((point) => [
+                point.date,
+                chartMode === 'absolute' ? point.gainLossAmount : point.gainLossRatio,
+              ]),
+            },
+          ]),
     ],
   }
 
@@ -329,10 +421,29 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
       <div className="panel__header">
         <div>
           <p className="eyebrow">Valuation</p>
-          <h2>Stacked portfolio evolution</h2>
+          <h2>
+            {chartMode === 'stacked'
+              ? 'Stacked portfolio evolution'
+              : chartMode === 'absolute'
+                ? 'Portfolio gain/loss (absolute)'
+                : 'Portfolio gain/loss (relative)'}
+          </h2>
           <p className="chart-toolbar__hint">Cmd-click a legend item to isolate it.</p>
         </div>
         <div className="chart-toolbar">
+          <div className="chart-mode-switch" role="tablist" aria-label="Portfolio chart mode">
+            {chartModeOptions.map((mode) => (
+              <button
+                key={mode.id}
+                type="button"
+                className={`chart-mode-switch__button ${chartMode === mode.id ? 'chart-mode-switch__button--active' : ''}`}
+                onClick={() => setChartMode(mode.id)}
+                aria-pressed={chartMode === mode.id}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             className="button button--ghost"
@@ -362,6 +473,14 @@ export function PortfolioChart({ valuation }: PortfolioChartProps) {
   )
 }
 
+type AggregatedSeriesPoint = {
+  date: string
+  marketValue: number
+  investedAmount: number
+  gainLossAmount: number
+  gainLossRatio: number
+}
+
 function getPointForSeries(
   valuation: PortfolioComputation,
   seriesName: string,
@@ -389,6 +508,42 @@ function formatOriginalAmount(point: PortfolioComputation['assetSeries'][string]
     point.quantityHeld * point.originalClose,
     point.originalCurrency,
   )
+}
+
+function buildAggregatedSelectedSeries(input: {
+  valuation: PortfolioComputation
+  selectedSymbols: string[]
+}): AggregatedSeriesPoint[] {
+  return input.valuation.points.map((point, pointIndex) => {
+    const totals = input.selectedSymbols.reduce(
+      (sum, symbol) => {
+        const assetPoint = input.valuation.assetSeries[symbol]?.[pointIndex]
+        if (!assetPoint) {
+          return sum
+        }
+
+        return {
+          marketValue: sum.marketValue + assetPoint.marketValue,
+          investedAmount: sum.investedAmount + assetPoint.investedAmount,
+          gainLossAmount: sum.gainLossAmount + assetPoint.gainLossAmount,
+        }
+      },
+      {
+        marketValue: 0,
+        investedAmount: 0,
+        gainLossAmount: 0,
+      },
+    )
+
+    return {
+      date: point.date,
+      marketValue: totals.marketValue,
+      investedAmount: totals.investedAmount,
+      gainLossAmount: totals.gainLossAmount,
+      gainLossRatio:
+        totals.investedAmount > 0 ? totals.gainLossAmount / totals.investedAmount : 0,
+    }
+  })
 }
 
 function buildInvestedOverlaySeries(input: {
