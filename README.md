@@ -44,15 +44,12 @@ npm run build
 
 ## Deployment
 
-The Vite config uses `base: './'` so the build can be published on a GitHub Pages repo subpath without hardcoding the repository name.
+This repo is configured for GitHub Pages project-site deployment at `https://martinperso.github.io/assets/`.
 
-Typical GitHub Pages flow:
+- Vite uses `base: '/assets/'`
+- GitHub Actions workflow `.github/workflows/deploy.yml` builds and deploys on every push to `main`
 
-```bash
-npm run build
-```
-
-Publish the generated `dist/` directory with your preferred GitHub Pages workflow or action.
+No manual publish step is required after pushing to `main`.
 
 ## Market data source
 
