@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import samplePortfolioCsv from '../assets/sample-dca-etfs.csv?raw'
 import { CsvUploader } from '../components/CsvUploader'
 import { FiltersPanel } from '../components/FiltersPanel'
@@ -48,10 +48,20 @@ export default function App() {
   const [googleSheetUrlInput, setGoogleSheetUrlInput] = useState<string>()
   const [starterSheetCurrency, setStarterSheetCurrency] =
     useState<StarterSheetCurrency>('EUR')
+  const didBootstrapSampleRef = useRef(false)
 
   useEffect(() => {
     void loadFromCache()
   }, [loadFromCache])
+
+  useEffect(() => {
+    if (didBootstrapSampleRef.current || !isReady || rows.length > 0 || rawCsv || error) {
+      return
+    }
+
+    didBootstrapSampleRef.current = true
+    void importCsv(samplePortfolioCsv)
+  }, [error, importCsv, isReady, rawCsv, rows.length])
 
   useEffect(() => {
     void loadPriceSourceFromCache()
