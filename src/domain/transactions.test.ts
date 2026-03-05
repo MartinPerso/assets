@@ -32,12 +32,14 @@ describe('transaction validation', () => {
       validRow,
       { ...validRow, id: '2' },
       { ...validRow, id: '3', date: '32/02/2024' },
+      { ...validRow, id: '4', date: '3/9/23' },
     ])
 
     expect(result.hasErrors).toBe(true)
     expect(result.errorsById['1']).toContain('Duplicate transaction row')
     expect(result.errorsById['2']).toContain('Duplicate transaction row')
     expect(result.errorsById['3'][0]).toContain('Invalid date')
+    expect(result.errorsById['4'][0]).toContain('Expected format: dd/MM/yyyy')
   })
 
   it('accepts sell rows with a negative quantity', () => {

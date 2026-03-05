@@ -45,6 +45,12 @@ const useTransactionsStore = create<TransactionState>((set) => ({
 
     try {
       const rows = parseCsvContent(csvText).map(normalizeRow)
+      const validation = validateTransactionRows(rows)
+
+      if (validation.hasErrors) {
+        throw buildImportValidationError(rows, validation.errorsById)
+      }
+
       await transactionsRepo.save(rows, csvText)
 
       set({
@@ -89,6 +95,23 @@ function normalizeRow(row: TransactionCsvRow): TransactionCsvRow {
     ...row,
     currency: row.currency?.trim().toUpperCase() || 'EUR',
   }
+}
+
+function buildImportValidationError(
+  rows: TransactionCsvRow[],
+  errorsById: Record<string, string[]>,
+): Error {
+  const rowIndexById = new Map(rows.map((row, index) => [row.id, index]))
+  const [firstRowId, firstMessages = []] = Object.entries(errorsById)[0] ?? []
+  const firstMessage = firstMessages[0] ?? 'Invalid CSV data'
+  const firstRowIndex = rowIndexById.get(firstRowId)
+  const csvLine = firstRowIndex === undefined ? undefined : firstRowIndex + 2
+  const rowHint = csvLine ? ` at CSV line ${csvLine}` : ''
+  const issueCount = Object.keys(errorsById).length
+
+  return new Error(
+    `CSV validation failed${rowHint}: ${firstMessage}. Found ${issueCount} invalid row(s).`,
+  )
 }
 
 export function useTransactions() {

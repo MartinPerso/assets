@@ -60,7 +60,9 @@ export default function App() {
     }
 
     didBootstrapSampleRef.current = true
-    void importCsv(samplePortfolioCsv)
+    void importCsv(samplePortfolioCsv).catch((importError) => {
+      console.error('Unable to bootstrap sample CSV', importError)
+    })
   }, [error, importCsv, isReady, rawCsv, rows.length])
 
   useEffect(() => {

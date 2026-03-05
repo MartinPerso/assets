@@ -13,6 +13,17 @@ export function CsvUploader({
 }: CsvUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
+  function alertCsvLoadingError(error: unknown) {
+    const reason =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Unknown CSV loading error.'
+
+    window.alert(
+      `CSV loading failed. The file was not imported.\n\nReason: ${reason}`,
+    )
+  }
+
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
 
@@ -20,10 +31,22 @@ export function CsvUploader({
       return
     }
 
-    await onUpload(await file.text())
+    try {
+      await onUpload(await file.text())
+    } catch (error) {
+      alertCsvLoadingError(error)
+    } finally {
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
+    }
+  }
 
-    if (inputRef.current) {
-      inputRef.current.value = ''
+  async function handleLoadSample() {
+    try {
+      await onLoadSample()
+    } catch (error) {
+      alertCsvLoadingError(error)
     }
   }
 
@@ -51,7 +74,7 @@ export function CsvUploader({
         type="button"
         className="button button--ghost"
         onClick={() => {
-          void onLoadSample()
+          void handleLoadSample()
         }}
         disabled={disabled}
       >

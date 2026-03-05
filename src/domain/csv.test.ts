@@ -22,4 +22,10 @@ describe('csv parsing', () => {
       '01/02/2024,iShares MSCI World ETF,NYSEARCA:URTH,4,93.07,USD,Demo CTO,import',
     )
   })
+
+  it('throws a readable error for empty files', () => {
+    expect(() => parseCsvContent('   \n\t')).toThrow(
+      'CSV file is empty. Expected header row: Date, Name, ISIN, Quantity, Price, Currency, Account, Comments.',
+    )
+  })
 })

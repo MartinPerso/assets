@@ -8,12 +8,19 @@ import {
 } from 'date-fns'
 
 export const INPUT_DATE_FORMAT = 'dd/MM/yyyy'
+const STRICT_INPUT_DATE_PATTERN = /^\d{2}\/\d{2}\/\d{4}$/
 
 export function parseInputDateToIso(value: string): string {
-  const parsed = parse(value.trim(), INPUT_DATE_FORMAT, new Date())
+  const trimmed = value.trim()
+
+  if (!STRICT_INPUT_DATE_PATTERN.test(trimmed)) {
+    throw new Error(`Invalid date "${value}". Expected format: ${INPUT_DATE_FORMAT}`)
+  }
+
+  const parsed = parse(trimmed, INPUT_DATE_FORMAT, new Date())
 
   if (!isValid(parsed)) {
-    throw new Error(`Invalid date "${value}"`)
+    throw new Error(`Invalid date "${value}". Expected format: ${INPUT_DATE_FORMAT}`)
   }
 
   return format(parsed, 'yyyy-MM-dd')

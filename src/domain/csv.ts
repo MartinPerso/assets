@@ -5,6 +5,12 @@ import type { TransactionCsvRow } from '../types/transaction'
 type CsvRowRecord = Record<(typeof CSV_HEADERS)[number], string>
 
 export function parseCsvContent(csvText: string): TransactionCsvRow[] {
+  if (!csvText.trim()) {
+    throw new Error(
+      `CSV file is empty. Expected header row: ${CSV_HEADERS.join(', ')}.`,
+    )
+  }
+
   const parsed = Papa.parse<CsvRowRecord>(csvText, {
     header: true,
     skipEmptyLines: 'greedy',
@@ -12,7 +18,10 @@ export function parseCsvContent(csvText: string): TransactionCsvRow[] {
   })
 
   if (parsed.errors.length > 0) {
-    throw new Error(parsed.errors[0].message)
+    const firstError = parsed.errors[0]
+    const rowHint =
+      typeof firstError.row === 'number' ? ` at row ${firstError.row + 1}` : ''
+    throw new Error(`Unable to parse CSV${rowHint}: ${firstError.message}`)
   }
 
   const fields = parsed.meta.fields ?? []
